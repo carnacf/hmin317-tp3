@@ -51,8 +51,12 @@
 #include "mainwidget.h"
 
 #include <QMouseEvent>
+#include <QString>
+#include <QPalette>
+#include <QLabel>
 #include <QTimer>
 #include <math.h>
+#include <iostream>
 
 
 MainWidget::MainWidget(QWidget *parent) :
@@ -64,14 +68,24 @@ MainWidget::MainWidget(QWidget *parent) :
 {
 }
 
-MainWidget::MainWidget(int fps,QWidget *parent) :
+MainWidget::MainWidget(int fps,string txt,int season,QWidget *parent) :
     QOpenGLWidget(parent),
     geometries(0),
     texture(0),
     rotationAxis(0.0,0.0,1.0),
     angularSpeed(2.0),
-    fps(fps)
+    fps(fps),
+    season(season)
 {
+	lab = new QLabel(this);
+	QPalette pal;
+	QString s = QString::fromStdString(txt);
+	pal.setColor(QPalette::WindowText,Qt::red);
+	
+	lab->setPalette(pal);
+	lab->setText(s);
+	setSeasonLabel();
+	this->resize(500,500);
 }
 
 MainWidget::~MainWidget()
@@ -83,6 +97,37 @@ MainWidget::~MainWidget()
     delete geometries;
     doneCurrent();
 }
+
+void MainWidget::setLabel(string txt){
+	QString s = QString::fromStdString(txt);
+	lab->setText(s);
+	lab->adjustSize();
+}
+
+void MainWidget::nextSeason(){
+	season = (season+1)%4;
+	cout<<season<<endl;
+	setSeasonLabel();
+	emit newSeason();
+}
+
+void MainWidget::setSeasonLabel(){
+	switch(season){
+		case 0:
+			setLabel("Eté");
+			break;
+		case 1:
+			setLabel("Automne");
+			break;
+		case 2:
+			setLabel("Hiver");
+			break;
+		case 3:
+			setLabel("Printemps");
+			break;
+	}
+}
+
 //! [0]
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {

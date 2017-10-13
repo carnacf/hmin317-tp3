@@ -49,8 +49,12 @@
 ****************************************************************************/
 
 #include <QApplication>
+#include <QTimer>
+#include <QObject>
 #include <QLabel>
 #include <QSurfaceFormat>
+#include <iostream>
+#include <unistd.h>
 
 #ifndef QT_NO_OPENGL
 #include "mainwidget.h"
@@ -67,15 +71,33 @@ int main(int argc, char *argv[])
     app.setApplicationName("plane");
     app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
-    /*MainWidget widget1(1);
-    MainWidget widget2(10);*/
-    MainWidget widget3(30);
-    MainWidget widget4(50);
+    MainWidget widget1(60,"test",0);
+    MainWidget widget2(60,"test",1);
+    MainWidget widget3(60,"test",2);
+    MainWidget widget4(60,"test",3);
     
-    /*widget1.show();
-    widget2.show();*/
+    QObject::connect(&widget1,SIGNAL(newSeason()),&widget2, SLOT(nextSeason()));
+    QObject::connect(&widget1,SIGNAL(newSeason()),&widget3, SLOT(nextSeason()));
+    QObject::connect(&widget1,SIGNAL(newSeason()),&widget4, SLOT(nextSeason()));
+    
+    QTimer *timer = new QTimer(&app);
+    QObject::connect(timer,SIGNAL(timeout()),&widget1,SLOT(nextSeason()));
+    timer->start(1000);
+    
+    widget1.show();
+    widget2.show();
     widget3.show();
     widget4.show();
+    
+    
+    
+    /*for(int i = 0;i<50;i++){
+    	sleep(1);
+    	cout<<"Changement de saison..."<<endl;
+    	widget1.nextSeason();
+    }*/
+    
+    
 #else
     QLabel note("OpenGL Support required");
     note.show();

@@ -54,6 +54,7 @@
 #include "geometryengine.h"
 
 #include <QOpenGLWidget>
+#include <QLabel>
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
 #include <QQuaternion>
@@ -61,6 +62,9 @@
 #include <QBasicTimer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
+#include <string>
+
+using namespace std;
 
 class GeometryEngine;
 
@@ -70,8 +74,17 @@ class MainWidget : public QOpenGLWidget, protected QOpenGLFunctions
 
 public:
     explicit MainWidget(QWidget *parent = 0);
-    MainWidget(int fps,QWidget *parent = 0);
+    MainWidget(int fps,string txt,int season,QWidget *parent = 0);
     ~MainWidget();
+    
+    void setLabel(string txt);
+    void setSeasonLabel();
+    
+public slots:
+	void nextSeason();
+	
+signals:
+	void newSeason();
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
@@ -89,6 +102,10 @@ protected:
  	void keyReleaseEvent(QKeyEvent *event);
  	
 private:
+	QLabel* lab;
+	
+	//QTime time;
+
     QBasicTimer timer;
     QOpenGLShaderProgram program;
     GeometryEngine *geometries;
@@ -103,6 +120,7 @@ private:
     QQuaternion rotation;
     
     int fps;
+    int season;
 };
 
 #endif // MAINWIDGET_H

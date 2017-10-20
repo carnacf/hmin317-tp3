@@ -52,6 +52,7 @@
 #define MAINWIDGET_H
 
 #include "geometryengine.h"
+#include "particuleengine.h"
 
 #include <QOpenGLWidget>
 #include <QLabel>
@@ -59,6 +60,7 @@
 #include <QMatrix4x4>
 #include <QQuaternion>
 #include <QVector2D>
+#include <QVector4D>
 #include <QBasicTimer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
@@ -78,7 +80,7 @@ public:
     ~MainWidget();
     
     void setLabel(string txt);
-    void setSeasonLabel();
+    void setSeason();
     
 public slots:
 	void nextSeason();
@@ -97,6 +99,7 @@ protected:
 
     void initShaders();
     void initTextures();
+    void initParticules();
     
     void keyPressEvent(QKeyEvent *event);
  	void keyReleaseEvent(QKeyEvent *event);
@@ -109,8 +112,10 @@ private:
     QBasicTimer timer;
     QOpenGLShaderProgram program;
     GeometryEngine *geometries;
+    ParticuleEngine *particules;
 
     QOpenGLTexture *texture;
+    QVector4D *color;
 
     QMatrix4x4 projection;
 

@@ -77,6 +77,7 @@ MainWidget::MainWidget(int fps,string txt,int season,QWidget *parent) :
     fps(fps),
     season(season)
 {
+	color = new QVector4D();
 	lab = new QLabel(this);
 	QPalette pal;
 	QString s = QString::fromStdString(txt);
@@ -84,7 +85,7 @@ MainWidget::MainWidget(int fps,string txt,int season,QWidget *parent) :
 	
 	lab->setPalette(pal);
 	lab->setText(s);
-	setSeasonLabel();
+	setSeason();
 	this->resize(500,500);
 }
 
@@ -106,24 +107,27 @@ void MainWidget::setLabel(string txt){
 
 void MainWidget::nextSeason(){
 	season = (season+1)%4;
-	cout<<season<<endl;
-	setSeasonLabel();
+	setSeason();
 	emit newSeason();
 }
 
-void MainWidget::setSeasonLabel(){
+void MainWidget::setSeason(){
 	switch(season){
 		case 0:
 			setLabel("Eté");
+			color = new QVector4D(0.1,0.9,0.5,1.0);
 			break;
 		case 1:
 			setLabel("Automne");
+			color = new QVector4D(0.9,0.2,0.2,1.0);
 			break;
 		case 2:
 			setLabel("Hiver");
+			color = new QVector4D(0.1,0.9,0.5,1.0);
 			break;
 		case 3:
 			setLabel("Printemps");
+			color = new QVector4D(0.1,0.9,0.5,1.0);
 			break;
 	}
 }
@@ -154,6 +158,7 @@ void MainWidget::mouseReleaseEvent(QMouseEvent *e)
     angularSpeed += acc;*/
 }
 //! [0]
+
 void MainWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch(event->key()){
@@ -172,6 +177,7 @@ void MainWidget::keyReleaseEvent(QKeyEvent *event)
 {
 	
 }
+
 //! [1]
 void MainWidget::timerEvent(QTimerEvent *)
 {
@@ -201,6 +207,7 @@ void MainWidget::initializeGL()
 
     initShaders();
     initTextures();
+    initParticules();
 
 //! [2]
     // Enable depth buffer
@@ -214,6 +221,10 @@ void MainWidget::initializeGL()
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(1000/fps,this);
+}
+
+void MainWidget::initParticules(){
+
 }
 
 //! [3]
@@ -296,7 +307,7 @@ void MainWidget::paintGL()
     // matrix.lookAt(eye,center,up);
 
     matrix.rotate(rotation);
-
+	program.setUniformValue("ambiant_color",*color);
 
     // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", projection * matrix);
